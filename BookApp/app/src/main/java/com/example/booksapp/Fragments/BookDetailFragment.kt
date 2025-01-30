@@ -30,19 +30,8 @@ import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-//private const val ARG_PARAM1 = "param1"
-//private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [BookDetailFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 @AndroidEntryPoint
 class BookDetailFragment : Fragment() {
-    // TODO: Rename and change types of parameters
     private lateinit var detailBinding: FragmentBookDetailBinding
     private lateinit var loading: ProgressBar
 
@@ -74,8 +63,6 @@ class BookDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        //booksViewModel = ViewModelProvider(this).get(BooksViewModel::class.java)
         activity?.let {
             if (it is MainActivity) {
                 it.hideBottomNav()
@@ -247,15 +234,6 @@ class BookDetailFragment : Fragment() {
         }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment BookDetailFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(isbn: String) =
             BookDetailFragment().apply {

@@ -18,16 +18,8 @@ import com.example.booksapp.utils.BestsellerBookList
 import com.example.booksapp.viewModel.BestsellerApiViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [DiscoverBooksFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 
 @AndroidEntryPoint
 class DiscoverBooksFragment : Fragment() {
@@ -173,76 +165,7 @@ class DiscoverBooksFragment : Fragment() {
         }
     }
 
-    /*private suspend fun loadBooks(endpoint: String, recyclerView: RecyclerView, progressBar: ProgressBar,
-                                  maxRetries: Int = 15,
-                                  delayBetweenRetries: Long = 2000L) {
-        var currentAttempt = 0
-        while (true) {
-            try {
-                val response = RetrofitInstance.api_Bestsellers.getBestsellerBooks(endpoint)
-                if (response.isSuccessful && response.body() != null) {
-                    val bookList = response.body()!!.results.books
-                    withContext(Dispatchers.Main) {
-                        recyclerView.apply {
-                            bookListAdapter = BookListAdapter(bookList)
-                            adapter = bookListAdapter
-                            layoutManager =
-                                LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-                        }
-
-                        //Otvaranje detalja
-                        /*bookListAdapter.onItemClickListener = { bookItem ->
-                        val intent = Intent(requireContext(), DetailActivity::class.java).apply {
-                            putExtra("ISBN", bookItem.primary_isbn13)
-                        }
-                        startActivity(intent)
-                    }*/
-
-                        bookListAdapter.onItemClickListener = { bookItem ->
-                            val fragment = BookDetailFragment.newInstance(bookItem.primary_isbn13)
-
-                            // Zamijeni trenutni fragment s DetailFragment
-                            val transaction: FragmentTransaction =
-                                parentFragmentManager.beginTransaction()
-                            transaction.replace(R.id.fragment_container, fragment)
-                            transaction.addToBackStack(null) // Omogućava navigaciju unazad
-                            transaction.commit()
-                        }
-
-                        progressBar.visibility = View.GONE
-                    }
-                    return
-
-                } else {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(requireContext(), "Failed to load books", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG)
-                        .show()
-                }
-            }
-            
-            currentAttempt++
-            if (currentAttempt < maxRetries) {
-                delay(delayBetweenRetries)
-            }
-        }
-    }*/
-
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment DiscoverBooksFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             DiscoverBooksFragment().apply {

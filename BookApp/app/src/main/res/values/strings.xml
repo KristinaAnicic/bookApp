@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">BooksApp</string>
+    <string name="beginning_text">What would you like to read?</string>
+    <string name="search_hint">Search book titles or authors</string>
+    <string name="title1">Combined Print &amp; E-Book Fiction - Bestsellers</string>
+    <string name="title2">Combined Print &amp; E-Book Nonfiction - Bestsellers</string>
+    <string name="title3">Advice How-To and Miscellaneous - Bestsellers</string>
+    <string name="title4">Young Adult - Bestsellers</string>
+
+    <string name="url_fiction">combined-print-and-e-book-fiction</string>
+    <string name="url_nonfiction">combined-print-and-e-book-nonfiction</string>
+    <string name="url_advice">advice-how-to-and-miscellaneous</string>
+    <string name="url_youngAdult">young-adult</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

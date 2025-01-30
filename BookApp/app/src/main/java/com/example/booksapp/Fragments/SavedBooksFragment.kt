@@ -1,27 +1,35 @@
 package com.example.booksapp.Fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
@@ -40,6 +48,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
 import coil.compose.AsyncImage
+import com.example.booksapp.data.database.Entities.Book
 import com.example.booksapp.data.database.Entities.ReadingStreak
 import com.example.booksapp.viewModel.BooksViewModel
 import com.example.booksapp.ui.theme.BooksAppTheme
@@ -71,10 +80,6 @@ class SavedBooksFragment : Fragment() {
         AppDatabase.getDatabase(requireContext())
     }*/
 
-    //private lateinit var booksViewModel: BooksViewModel
-    //private var bookRepository = BookRepository(readingStatusDao, readingFormatDao)
-
-
     private val booksViewModel: BooksViewModel by viewModels()
 
     /*private val booksViewModel by viewModels<BooksViewModel>(
@@ -102,6 +107,7 @@ class SavedBooksFragment : Fragment() {
         }
     }
 
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -111,28 +117,54 @@ class SavedBooksFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 BooksAppTheme {
-                    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                        Column(
+                    Scaffold(
+                        modifier = Modifier.fillMaxSize(),
+                        floatingActionButton = {
+                            FloatingActionButton(onClick = { }) {
+                                Icon(Icons.Default.Add, contentDescription = "Add")
+                            }
+                        }
+                    , content = {
+                        Column (
                             modifier = Modifier
-                                .padding(innerPadding)
+                                //.padding(innerPadding)
+                                //.padding(8.dp)
                                 .fillMaxSize()
+                                .padding(start = 8.dp, top = 20.dp)
                                 .verticalScroll(rememberScrollState())) {
-                            Streak(booksViewModel = booksViewModel)
 
-                            Text(
-                                text = "My book list",
-                                modifier = Modifier
-                                    .padding(all = 8.dp),
-                                style = MaterialTheme.typography.titleLarge
-                            )
+                                Streak(booksViewModel = booksViewModel)
 
-                            BooksScreen(booksViewModel = booksViewModel)
+                                Spacer(
+                                    modifier = Modifier.height(10.dp)
+                                )
+                                Text(
+                                    text = "My book list",
+                                    //modifier = Modifier.padding(all = 8.dp),
+                                    modifier = Modifier.padding(top = 15.dp),
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Bold
+                                )
+
+                                val books by booksViewModel.books.collectAsState(initial = emptyList())
+                                BooksScreen(books)
+
+                                Text(
+                                    text = "Favorite books",
+                                    //modifier = Modifier.padding(all = 8.dp),
+                                    modifier = Modifier.padding(top = 15.dp),
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Bold
+                                )
+
+                                val favoriteBooks by booksViewModel.favoriteBooks.collectAsState(initial = emptyList())
+                                BooksScreen(favoriteBooks)
                         }
-                        }
-                    }
+                    })
                 }
             }
         }
+    }
         //return inflater.inflate(R.layout.fragment_my_books, container, false)
 
     companion object {
@@ -148,19 +180,24 @@ class SavedBooksFragment : Fragment() {
 }
 
 @Composable
-fun BooksScreen(booksViewModel: BooksViewModel) {
-    val books by booksViewModel.books.collectAsState(initial = emptyList())
-
+fun BooksScreen(/*booksViewModel: BooksViewModel*/ books: List<Book>) {
+   // val books by booksViewModel.books.collectAsState(initial = emptyList())
     if (books.isEmpty()) {
-        Text(
-            modifier = Modifier.padding(all = 8.dp),
-            text = "No books available"
-        )
+        OutlinedCard(
+            modifier = Modifier.padding(top = 8.dp).fillMaxWidth(),
+            //text = "No saved books"
+        ){
+            Text(text = "No saved books",
+                modifier = Modifier.padding(30.dp),
+                textAlign = TextAlign.Center)
+        }
     } else {
         LazyRow(
             contentPadding = PaddingValues(16.dp),
-            modifier = Modifier.fillMaxSize().padding(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             items(books) { book ->
                 book.coverImage?.let {
@@ -183,15 +220,14 @@ fun Streak(booksViewModel: BooksViewModel){
     val streak by booksViewModel.readingStreak.collectAsState(initial = null)
 
     Text(
-        text="STATS",
-        modifier = Modifier
-            .padding(all = 8.dp),
-        style = MaterialTheme.typography.titleMedium
+        text="Stats",
+        modifier = Modifier.padding(8.dp),
+        style = MaterialTheme.typography.titleLarge,
+        fontWeight = FontWeight.Bold
     )
 
     Row(
         modifier = Modifier.fillMaxWidth()
-            .padding(10.dp)
             .horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(5.dp)
     ) {

@@ -17,10 +17,12 @@ import com.example.booksapp.data.database.Entities.ReadingStatus
 import com.example.booksapp.data.database.Entities.ReadingStreak
 import com.example.booksapp.data.database.ReadingStatusEnum
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
@@ -40,14 +42,19 @@ class BooksViewModel @Inject constructor(
 ) : ViewModel() {
 
     var bookRepository = BookRepository(readingStatusDao, readingFormatDao)
-    private val _selectedStatus = MutableStateFlow(ReadingStatusEnum.PLAN_TO_READ)
+    private val _selectedStatus = MutableStateFlow<ReadingStatusEnum?>(null)
+    val selectedStatus: StateFlow<ReadingStatusEnum?> = _selectedStatus.asStateFlow()
 
     val books: Flow<List<Book>> = bookDao.getBookList()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    val booksByStatus: Flow<List<Book>> = _selectedStatus
-        .flatMapLatest { status ->
-            bookDao.getBooksByStatus(status.id)
+    val booksByStatus: Flow<List<Book>> = _selectedStatus.flatMapLatest {
+        status ->
+            if (status == null) {
+                bookDao.getBookList()
+            } else {
+                bookDao.getBooksByStatus(status.id)
+            }
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
@@ -66,8 +73,18 @@ class BooksViewModel @Inject constructor(
     val readingStatuses: Flow<List<ReadingStatus>> = readingStatusDao.getStatusList()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    fun setStatusType(status: ReadingStatusEnum) {
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            bookRepository.initializeDatabase()
+        }
+    }
+
+    fun setStatusType(status: ReadingStatusEnum?) {
         _selectedStatus.value = status
+    }
+
+    fun getStatusType() : ReadingStatusEnum?{
+        return _selectedStatus.value
     }
 
     fun getBookById(bookId: Long): Flow<BookWithDetails?> {

@@ -8,12 +8,9 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.booksapp.R
 import com.example.booksapp.data.database.Entities.Book
-import com.example.booksapp.data.database.ReadingFormatEnum
-import com.example.booksapp.data.database.ReadingStatusEnum
 import com.example.booksapp.model.BookDetail.Item
 import com.example.booksapp.viewModel.BooksViewModel
 import java.util.Date

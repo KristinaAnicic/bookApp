@@ -32,7 +32,7 @@ import androidx.fragment.app.viewModels
 import com.example.booksapp.Components.BookListGrid
 import com.example.booksapp.MainActivity
 import com.example.booksapp.R
-import com.example.booksapp.data.database.ReadingStatusEnum
+import com.example.booksapp.utils.ReadingStatusEnum
 import com.example.booksapp.ui.theme.BooksAppTheme
 import com.example.booksapp.viewModel.BooksViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -71,7 +71,7 @@ class AllSavedBooksFragment : Fragment() {
                                 ) {
                                     SingleChoiceButton(booksViewModel)
                                 }
-                                Spacer(modifier = Modifier.padding(8.dp))
+                                Spacer(modifier = Modifier.padding(5.dp))
                                 BookListGrid(books,
                                     onBookClick = { bookId ->
                                         (activity as? MainActivity)?.openBookDetailFragment(bookId)

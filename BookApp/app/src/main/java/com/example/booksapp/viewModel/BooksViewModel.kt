@@ -1,6 +1,6 @@
 package com.example.booksapp.viewModel
 
-import android.util.Log
+import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.booksapp.data.database.BookRepository
@@ -15,7 +15,7 @@ import com.example.booksapp.data.database.Entities.Quote
 import com.example.booksapp.data.database.Entities.ReadingFormat
 import com.example.booksapp.data.database.Entities.ReadingStatus
 import com.example.booksapp.data.database.Entities.ReadingStreak
-import com.example.booksapp.data.database.ReadingStatusEnum
+import com.example.booksapp.utils.ReadingStatusEnum
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -39,11 +39,14 @@ class BooksViewModel @Inject constructor(
     private val readingStatusDao: ReadingStatusDao,
     private val readingFormatDao: ReadingFormatDao,
     private val readingStreakDao: ReadingStreakDao,
+    private val sharedPreferences: SharedPreferences
 ) : ViewModel() {
 
     var bookRepository = BookRepository(readingStatusDao, readingFormatDao)
     private val _selectedStatus = MutableStateFlow<ReadingStatusEnum?>(null)
     val selectedStatus: StateFlow<ReadingStatusEnum?> = _selectedStatus.asStateFlow()
+
+    private var isDatabaseInitialized = false
 
     val books: Flow<List<Book>> = bookDao.getBookList()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
@@ -75,7 +78,10 @@ class BooksViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            bookRepository.initializeDatabase()
+            if (!sharedPreferences.getBoolean("is_database_initialized", false)) {
+                bookRepository.initializeDatabase()
+                sharedPreferences.edit().putBoolean("is_database_initialized", true).apply()
+            }
         }
     }
 

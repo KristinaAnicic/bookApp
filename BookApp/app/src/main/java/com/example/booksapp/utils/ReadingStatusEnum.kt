@@ -1,4 +1,4 @@
-package com.example.booksapp.data.database
+package com.example.booksapp.utils
 
 enum class ReadingStatusEnum(val id: Long, val status_name: String) {
     CURRENTLY_READING(1, "Currently reading"),

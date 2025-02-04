@@ -41,7 +41,7 @@ data class Book(
     val impressions: String? = null,
     val pauseNotes: String? = null,
     val lastReadDate: Date? = null,
-    val favorite: Boolean = false,
+    var favorite: Boolean = false,
     val hasBook: Boolean = false,
     val googleApiId: String? = null
 )

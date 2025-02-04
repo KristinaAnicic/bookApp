@@ -1,14 +1,19 @@
 package com.example.booksapp.Fragments
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.ContextWrapper
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,6 +24,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -26,7 +32,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -37,17 +45,25 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
 import coil.compose.AsyncImage
+import com.example.booksapp.Components.BookListRow
+import com.example.booksapp.Components.Streak
+import com.example.booksapp.MainActivity
+import com.example.booksapp.R
 import com.example.booksapp.data.database.Entities.Book
 import com.example.booksapp.data.database.Entities.ReadingStreak
 import com.example.booksapp.viewModel.BooksViewModel
@@ -97,9 +113,9 @@ class SavedBooksFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        GlobalScope.launch(Dispatchers.IO) {
+        /*GlobalScope.launch(Dispatchers.IO) {
             booksViewModel.bookRepository.initializeDatabase()
-        }
+        }*/
 
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
@@ -138,16 +154,36 @@ class SavedBooksFragment : Fragment() {
                                 Spacer(
                                     modifier = Modifier.height(10.dp)
                                 )
-                                Text(
-                                    text = "My book list",
-                                    //modifier = Modifier.padding(all = 8.dp),
-                                    modifier = Modifier.padding(top = 15.dp),
-                                    style = MaterialTheme.typography.titleLarge,
-                                    fontWeight = FontWeight.Bold
-                                )
+                                Row (
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 15.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ){
+                                    Text(
+                                        text = "My book list",
+                                        //modifier = Modifier.padding(all = 8.dp),
+                                        style = MaterialTheme.typography.titleLarge,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                        contentDescription = "More",
+                                        modifier = Modifier.size(35.dp)
+                                            .clickable(
+                                                onClick = {
+                                                    (activity as? MainActivity)?.openAllSavedBooksFragment()
+                                                }
+                                            ))
+                                }
+
 
                                 val books by booksViewModel.books.collectAsState(initial = emptyList())
-                                BooksScreen(books)
+                                BookListRow(books,
+                                    onBookClick = { bookId ->
+                                        (activity as? MainActivity)?.openBookDetailFragment(bookId)
+                                    })
 
                                 Text(
                                     text = "Favorite books",
@@ -158,7 +194,10 @@ class SavedBooksFragment : Fragment() {
                                 )
 
                                 val favoriteBooks by booksViewModel.favoriteBooks.collectAsState(initial = emptyList())
-                                BooksScreen(favoriteBooks)
+                                BookListRow(favoriteBooks,
+                                    onBookClick = { bookId ->
+                                        (activity as? MainActivity)?.openBookDetailFragment(bookId)
+                                    })
                         }
                     })
                 }
@@ -176,135 +215,5 @@ class SavedBooksFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
-    }
-}
-
-@Composable
-fun BooksScreen(/*booksViewModel: BooksViewModel*/ books: List<Book>) {
-   // val books by booksViewModel.books.collectAsState(initial = emptyList())
-    if (books.isEmpty()) {
-        OutlinedCard(
-            modifier = Modifier.padding(top = 8.dp).fillMaxWidth(),
-            //text = "No saved books"
-        ){
-            Text(text = "No saved books",
-                modifier = Modifier.padding(30.dp),
-                textAlign = TextAlign.Center)
-        }
-    } else {
-        LazyRow(
-            contentPadding = PaddingValues(16.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(5.dp)
-        ) {
-            items(books) { book ->
-                book.coverImage?.let {
-                    imageUrl ->
-                    if (imageUrl.isNotEmpty()) {
-                        AsyncImage(
-                            model = imageUrl,
-                            contentDescription = "Book cover",
-                            modifier = Modifier.width(100.dp)
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun Streak(booksViewModel: BooksViewModel){
-    val streak by booksViewModel.readingStreak.collectAsState(initial = null)
-
-    Text(
-        text="Stats",
-        modifier = Modifier.padding(8.dp),
-        style = MaterialTheme.typography.titleLarge,
-        fontWeight = FontWeight.Bold
-    )
-
-    Row(
-        modifier = Modifier.fillMaxWidth()
-            .horizontalScroll(rememberScrollState()),
-        horizontalArrangement = Arrangement.spacedBy(5.dp)
-    ) {
-        StreakCard("WEEKLY STREAK", (streak?.consecutiveReadingWeeks ?: 0).toString(), 120.dp)
-        StreakCard("DAILY STREAK", (streak?.consecutiveReadingDays ?: 0).toString(), 120.dp)
-        StreakCard("LAST READING DATE", (streak?.lastReadDate ?: "no record").toString(), 160.dp)
-    }
-}
-
-@Composable
-fun StreakCard(title: String, value: String, width: Dp) {
-    OutlinedCard(
-        modifier = Modifier
-            .width(width)
-            .fillMaxHeight(),
-        border = BorderStroke(1.dp, Color.Gray)
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(8.dp)
-                .fillMaxSize()
-                .fillMaxHeight(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-            Text(
-                text = value,
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-}
-@Preview(showBackground = true)
-@Composable
-fun StreakPreview() {
-    BooksAppTheme {
-        StreakPreviewContent()
-    }
-}
-
-fun parseDate(dateString: String): Date {
-    val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-    return format.parse(dateString) ?: throw IllegalArgumentException("Invalid date format: $dateString")
-}
-
-@Composable
-fun StreakPreviewContent() {
-    val mockStreak = ReadingStreak(
-        consecutiveReadingWeeks = 5,
-        consecutiveReadingDays = 30,
-        lastReadDate = parseDate("2025-01-29")
-    )
-
-    Column {
-        Text(
-            text = "STATS",
-            modifier = Modifier.padding(all = 8.dp),
-            style = MaterialTheme.typography.titleMedium
-        )
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp)
-                .horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            StreakCard("WEEKLY STREAK", mockStreak.consecutiveReadingWeeks.toString(), 100.dp)
-            StreakCard("DAILY STREAK", mockStreak.consecutiveReadingDays.toString(), 100.dp)
-            StreakCard("LAST READING DATE", mockStreak.lastReadDate.toString(), 120.dp)
-        }
     }
 }

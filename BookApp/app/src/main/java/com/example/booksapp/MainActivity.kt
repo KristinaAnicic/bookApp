@@ -10,7 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import com.example.booksapp.Fragments.AllSavedBooksFragment
 import com.example.booksapp.Fragments.DiscoverBooksFragment
+import com.example.booksapp.Fragments.SavedBookDetailFragment
 import com.example.booksapp.Fragments.SavedBooksFragment
 import com.example.booksapp.databinding.ActivityMainBinding
 import com.example.booksapp.ui.theme.BooksAppTheme
@@ -83,6 +85,22 @@ class MainActivity : AppCompatActivity() {
 
     fun showBottomNav() {
     binding.bottomNavigation.visibility = View.VISIBLE
+    }
+
+    fun openBookDetailFragment(bookId: String) {
+        val fragment = SavedBookDetailFragment.newInstance(bookId)
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null) // Add to back stack for back navigation
+            .commit()
+    }
+
+    fun openAllSavedBooksFragment() {
+        val fragment = AllSavedBooksFragment();
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null) // Add to back stack for back navigation
+            .commit()
     }
 }
 

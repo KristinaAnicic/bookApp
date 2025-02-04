@@ -22,7 +22,6 @@ fun rememberParsedDescription(html: String?): Spanned {
     }
 }
 
-// Helper funkcija za konverziju u AnnotatedString
 @Composable
 fun rememberAnnotatedDescription(description: Spanned): AnnotatedString {
     return remember(description) {
@@ -45,7 +44,6 @@ fun rememberAnnotatedDescription(description: Spanned): AnnotatedString {
     }
 }
 
-// Pomoćna funkcija za obradu StyleSpan-ova
 private fun AnnotatedString.Builder.handleStyleSpan(
     span: StyleSpan,
     start: Int,

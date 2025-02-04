@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -77,17 +78,16 @@ fun BookListGrid(books: List<Book>,
     if (books.isEmpty()) {
         OutlinedCard(
             modifier = Modifier.padding(top = 8.dp).fillMaxWidth(),
-            //text = "No saved books"
         ){
             Text(text = "No saved books",
                 modifier = Modifier.padding(30.dp),
                 textAlign = TextAlign.Center)
         }
     } else {
-        LazyVerticalStaggeredGrid(
-            columns = StaggeredGridCells.Fixed(3),
-            verticalItemSpacing = 5.dp,
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(3),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
             modifier = Modifier.fillMaxSize().padding(10.dp)
         ) {
             items(books) { book ->
@@ -96,8 +96,7 @@ fun BookListGrid(books: List<Book>,
                     if (imageUrl.isNotEmpty()) {
                         Box(
                             modifier = Modifier
-                                .height(200.dp)
-                                .fillMaxWidth()
+                                .fillMaxHeight()
                                 .clickable { onBookClick(book.bookId.toString()) }
                         ) {
                             AsyncImage(

@@ -48,42 +48,12 @@ fun Streak(booksViewModel: BooksViewModel){
             .horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(5.dp)
     ) {
-        StreakCard("WEEKLY STREAK", (streak?.consecutiveReadingWeeks ?: 0).toString(), 120.dp)
-        StreakCard("DAILY STREAK", (streak?.consecutiveReadingDays ?: 0).toString(), 120.dp)
-        StreakCard("LAST READING DATE", (streak?.lastReadDate ?: "no record").toString(), 160.dp)
+        TextCard("WEEKLY STREAK", (streak?.consecutiveReadingWeeks ?: 0).toString(), 120.dp)
+        TextCard("DAILY STREAK", (streak?.consecutiveReadingDays ?: 0).toString(), 120.dp)
+        TextCard("LAST READING DATE", (streak?.lastReadDate ?: "no record").toString(), 160.dp)
     }
 }
 
-@Composable
-fun StreakCard(title: String, value: String, width: Dp) {
-    OutlinedCard(
-        modifier = Modifier
-            .width(width)
-            .fillMaxHeight(),
-        border = BorderStroke(1.dp, Color.Gray)
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(8.dp)
-                .fillMaxSize()
-                .fillMaxHeight(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-            Text(
-                text = value,
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-}
 @Preview(showBackground = true)
 @Composable
 fun StreakPreview() {
@@ -119,9 +89,9 @@ fun StreakPreviewContent() {
                 .horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            StreakCard("WEEKLY STREAK", mockStreak.consecutiveReadingWeeks.toString(), 100.dp)
-            StreakCard("DAILY STREAK", mockStreak.consecutiveReadingDays.toString(), 100.dp)
-            StreakCard("LAST READING DATE", mockStreak.lastReadDate.toString(), 120.dp)
+            TextCard("WEEKLY STREAK", mockStreak.consecutiveReadingWeeks.toString(), 100.dp)
+            TextCard("DAILY STREAK", mockStreak.consecutiveReadingDays.toString(), 100.dp)
+            TextCard("LAST READING DATE", mockStreak.lastReadDate.toString(), 120.dp)
         }
     }
 }

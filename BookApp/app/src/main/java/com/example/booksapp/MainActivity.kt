@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity() {
         val fragment = AllSavedBooksFragment();
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
-            .addToBackStack(null) // Add to back stack for back navigation
+            .addToBackStack(null)
             .commit()
     }
 }

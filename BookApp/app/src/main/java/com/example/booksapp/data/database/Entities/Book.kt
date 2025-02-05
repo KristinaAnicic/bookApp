@@ -33,7 +33,7 @@ data class Book(
     val numberOfPages: Int,
     val numberOfChapters: Int? = null,
     val readingStatusId: Long,
-    val readingFormatId: Long,
+    var readingFormatId: Long,
     val startDate: Date? = null,
     val endDate: Date? = null,
     val readPagesCount: Int? = 0,
@@ -43,5 +43,6 @@ data class Book(
     val lastReadDate: Date? = null,
     var favorite: Boolean = false,
     val hasBook: Boolean = false,
+    val trackChapters: Boolean = false,
     val googleApiId: String? = null
 )

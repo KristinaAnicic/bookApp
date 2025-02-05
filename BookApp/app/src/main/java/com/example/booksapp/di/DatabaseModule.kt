@@ -2,6 +2,8 @@ package com.example.booksapp.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.booksapp.data.database.AppDatabase
 import com.example.booksapp.data.database.DAOs.BookDao
 import com.example.booksapp.data.database.DAOs.QuoteDao
@@ -19,6 +21,12 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
+    private val MIGRATION_2_3 = object : Migration(1, 2) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("ALTER TABLE books ADD COLUMN trackChapters INTEGER DEFAULT 0")
+        }
+    }
+
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): AppDatabase {
@@ -26,7 +34,9 @@ object DatabaseModule {
             context,
             AppDatabase::class.java,
             "books_database"
-        ).fallbackToDestructiveMigration().build()
+        )
+            .addMigrations(MIGRATION_2_3)
+            .fallbackToDestructiveMigration().build()
     }
 
     @Provides

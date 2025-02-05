@@ -17,9 +17,9 @@ class BookRepository @Inject constructor(
         if(currentStates.isEmpty()){
             readingStatusDao.insertAllStatuses(
                 listOf(
+                    ReadingStatus(statusName = "Currently reading"),
                     ReadingStatus(statusName = "Plan to read"),
                     ReadingStatus(statusName = "Completed"),
-                    ReadingStatus(statusName = "Currently reading"),
                     ReadingStatus(statusName = "Dropped")
                 )
             )

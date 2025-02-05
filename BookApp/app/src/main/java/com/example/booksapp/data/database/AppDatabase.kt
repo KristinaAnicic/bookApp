@@ -23,7 +23,7 @@ import com.example.booksapp.data.database.Entities.ReadingStreak
         ReadingStreak::class,
         ReadingStatus::class,
         ReadingFormat::class],
-    version = 2
+    version = 3
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {

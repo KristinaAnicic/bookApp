@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -20,12 +21,20 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun TextCard(title: String, value: String, width: Dp) {
+fun TextCard(title: String,
+             value: String,
+             width: Dp,
+             backgroundColor: Color = Color.Transparent,
+             borderColor: Color = Color.Gray,
+             textColor: Color = MaterialTheme.colorScheme.onSurface) {
     OutlinedCard(
         modifier = Modifier
             .width(width)
             .fillMaxHeight(),
-        border = BorderStroke(1.dp, Color.Gray)
+        border = BorderStroke(1.dp, borderColor),
+        colors = CardDefaults.outlinedCardColors(
+            containerColor = backgroundColor
+        )
     ) {
         Column(
             modifier = Modifier
@@ -33,18 +42,20 @@ fun TextCard(title: String, value: String, width: Dp) {
                 .fillMaxSize()
                 .fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier.padding(bottom = 8.dp),
+                color = textColor
             )
             Text(
                 text = value,
                 style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = textColor
             )
         }
     }

@@ -8,6 +8,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="custom_teal">#6ABCB1</color>
+    <color name="custom_dark_teal">#AD1A594E</color>
+    <color name="custom_card_color">#607D8B</color>
+    <color name="custom_text_color">#afc5f8</color>
 
     <color name="primary_light">#6200EE</color>
     <color name="secondary_light">#03DAC6</color>

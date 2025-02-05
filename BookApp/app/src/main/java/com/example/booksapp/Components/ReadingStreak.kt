@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.booksapp.data.database.Entities.ReadingStreak
 import com.example.booksapp.ui.theme.BooksAppTheme
+import com.example.booksapp.utils.FormatDate.formatDate
 import com.example.booksapp.viewModel.BooksViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -50,7 +51,7 @@ fun Streak(booksViewModel: BooksViewModel){
     ) {
         TextCard("WEEKLY STREAK", (streak?.consecutiveReadingWeeks ?: 0).toString(), 120.dp)
         TextCard("DAILY STREAK", (streak?.consecutiveReadingDays ?: 0).toString(), 120.dp)
-        TextCard("LAST READING DATE", (streak?.lastReadDate ?: "no record").toString(), 160.dp)
+        TextCard("LAST READING DATE", (formatDate(streak?.lastReadDate) ?: "no record").toString(), 160.dp)
     }
 }
 

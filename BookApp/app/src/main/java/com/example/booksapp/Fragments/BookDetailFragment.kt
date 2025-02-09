@@ -34,6 +34,7 @@ class BookDetailFragment : Fragment() {
     private lateinit var detailBinding: FragmentBookDetailBinding
     private lateinit var loading: ProgressBar
     private var isbn: String? = null
+    private var googleId: String? = null
     private var currentBookItem: Item? = null
     var bookSaved: Boolean = false
     var bookFromDatabase: BookWithDetails? = null
@@ -62,6 +63,8 @@ class BookDetailFragment : Fragment() {
         }
 
         isbn = arguments?.getString("ISBN")
+        googleId = arguments?.getString("ID")
+        
 
         if (isbn != null) {
             loading = detailBinding.progressBar
@@ -71,7 +74,7 @@ class BookDetailFragment : Fragment() {
             detailBinding.scrollView3.visibility = View.GONE
 
             lifecycleScope.launch {
-                loadBookDetails(isbn!!)
+                loadBookDetails(isbn, googleId)
 
                 bookFromDatabase =
                     currentBookItem?.let {
@@ -117,7 +120,7 @@ class BookDetailFragment : Fragment() {
                                 detailBinding.addImageView.setImageResource(R.drawable.outline_add_box_24)
                                 bookSaved = false
                             } else {
-                                // Ako knjiga nije obrisana
+
                                 Toast.makeText(
                                     requireContext(),
                                     "Failed to delete the book",
@@ -131,18 +134,20 @@ class BookDetailFragment : Fragment() {
         }
     }
 
-        override fun onDestroyView() {
-            super.onDestroyView()
-            activity?.let {
-                if (it is MainActivity) {
-                    it.showBottomNav()
-                }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        activity?.let {
+            if (it is MainActivity) {
+                it.showBottomNav()
+                it.showSearchBar()
             }
         }
+    }
 
-    private suspend fun loadBookDetails(isbn: String) {
+    private suspend fun loadBookDetails(isbn: String?, id: String?) {
         try {
-            val bookDetails = fetchBookData(isbn) ?: run {
+            val bookDetails = fetchBookData(isbn, id) ?: run {
                 showErrorMessage("Failed to load book details")
                 return
             }
@@ -158,12 +163,17 @@ class BookDetailFragment : Fragment() {
         }
     }
 
-    private suspend fun fetchBookData(isbn: String): Item? {
-        val responseId = RetrofitInstance.api_Books.getBookByIsbn("isbn:$isbn")
-        if (!responseId.isSuccessful || responseId.body() == null) {
-            return null
+    private suspend fun fetchBookData(isbn: String?, id: String?): Item? {
+        var bookId = id
+        //Toast.makeText(context,"tekst: "+ bookId, Toast.LENGTH_SHORT).show()
+        if (bookId == null) {
+            val responseId = RetrofitInstance.api_Books.getBookByIsbn("isbn:$isbn")
+            if (!responseId.isSuccessful || responseId.body() == null) {
+                return null
+            }
+            bookId = responseId.body()!!.items[0].id
         }
-        val bookId = responseId.body()!!.items[0].id
+
         val responseDetails = RetrofitInstance.api_Books.getBookById(bookId)
         return if (responseDetails.isSuccessful && responseDetails.body() != null) {
             responseDetails.body()
@@ -211,10 +221,11 @@ class BookDetailFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(isbn: String) =
+        fun newInstance(isbn: String? = null, id: String? = null) =
             BookDetailFragment().apply {
                 arguments = Bundle().apply {
                     putString("ISBN", isbn)
+                    putString("ID",id)
                 }
             }
     }

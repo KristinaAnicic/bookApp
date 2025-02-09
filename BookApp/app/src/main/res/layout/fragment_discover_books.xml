@@ -13,26 +13,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!--android:layout_marginStart="5dp"
-        android:layout_marginTop="25dp"
-        android:layout_marginEnd="5dp"-->
-        <EditText
-            android:id="@+id/editTextSearch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:autofillHints="name"
-            android:drawableStart="@drawable/baseline_search_24"
-            android:drawableTint="#8B424242"
-            android:ems="10"
-            android:hint="@string/search_hint"
-            android:inputType="text"
-            android:padding="15dp"
-            android:textColorHint="#8B424242"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <ScrollView
             android:id="@+id/scrollView2"
             android:layout_width="0dp"
@@ -41,7 +21,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextSearch">
+            app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -54,6 +34,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:padding="10dp"
+                    android:layout_marginTop="10dp"
                     android:text="@string/title1"
                     android:textSize="18sp"
                     android:textStyle="bold" />

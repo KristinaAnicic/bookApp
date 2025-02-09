@@ -74,11 +74,18 @@ class AllSavedBooksFragment : Fragment() {
                                 Spacer(modifier = Modifier.padding(5.dp))
                                 BookListGrid(books,
                                     onBookClick = { bookId ->
-                                        (activity as? MainActivity)?.openBookDetailFragment(bookId)
+                                        (activity as? MainActivity)?.openSavedBookDetailFragment(bookId)
                                     })
                             }
                         })
                 }
+            }
+        }
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        activity?.let {
+            if (it is MainActivity) {
+                it.hideSearchBar()
             }
         }
     }

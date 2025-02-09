@@ -1,16 +1,19 @@
 package com.example.booksapp.Fragments
 
+import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.SearchView
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.booksapp.Adapter.BookListAdapter
+import com.example.booksapp.MainActivity
 import com.example.booksapp.R
 import com.example.booksapp.databinding.FragmentDiscoverBooksBinding
 import com.example.booksapp.model.Book
@@ -18,15 +21,8 @@ import com.example.booksapp.utils.BestsellerBookList
 import com.example.booksapp.viewModel.BestsellerApiViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
 @AndroidEntryPoint
 class DiscoverBooksFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
     private lateinit var binding: FragmentDiscoverBooksBinding
     private lateinit var bookListAdapter: BookListAdapter
 
@@ -42,12 +38,12 @@ class DiscoverBooksFragment : Fragment() {
     private lateinit var rvAdviceBooks: RecyclerView
     private lateinit var rvYoungAdultBooks: RecyclerView
 
+    //private lateinit var textSearch: SearchView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+
+
     }
 
     override fun onCreateView(
@@ -62,8 +58,8 @@ class DiscoverBooksFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        //textSearch = binding.editSearch
 
-        // Inicijalizacija pogleda
         loading1 = binding.loading1
         loading2 = binding.loading2
         loading3 = binding.loading3
@@ -78,7 +74,6 @@ class DiscoverBooksFragment : Fragment() {
         bestSellersApiViewModel = ViewModelProvider(this).get(BestsellerApiViewModel::class.java)
 
 
-        // Početno stanje (loading)
         loading1.visibility = View.VISIBLE
         loading2.visibility = View.VISIBLE
         loading3.visibility = View.VISIBLE
@@ -143,6 +138,18 @@ class DiscoverBooksFragment : Fragment() {
             )
         }*/
         }
+
+        /*textSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextChange(s: String): Boolean {
+                return true
+            }
+
+            override fun onQueryTextSubmit(s: String): Boolean {
+                (activity as? MainActivity)?.openSearchFragment(s)
+                return true
+            }
+
+        })*/
     }
 
     private fun setupRecyclerView(recyclerView: RecyclerView, books: List<Book>, progressBar: ProgressBar) {
@@ -155,24 +162,15 @@ class DiscoverBooksFragment : Fragment() {
 
 
         bookListAdapter.onItemClickListener = { bookItem ->
-            val fragment = BookDetailFragment.newInstance(bookItem.primary_isbn13)
+            (activity as? MainActivity)?.openBookDetailFragment(isbn = bookItem.primary_isbn13, id = null)
 
-            // Zamijeni trenutni fragment s DetailFragment
+            /*val fragment = BookDetailFragment.newInstance(isbn = bookItem.primary_isbn13)
+
             val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()
             transaction.replace(R.id.fragment_container, fragment)
-            transaction.addToBackStack(null) // Omogućava navigaciju unazad
-            transaction.commit()
+            transaction.addToBackStack(null)
+            transaction.commit()*/
         }
     }
 
-    companion object {
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            DiscoverBooksFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
 }

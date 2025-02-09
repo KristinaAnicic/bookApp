@@ -62,6 +62,9 @@ class BooksViewModel @Inject constructor(
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    val activeBooks: Flow<List<Book>> = bookDao.getBooksByStatuses(listOf(ReadingStatusEnum.CURRENTLY_READING.id, ReadingStatusEnum.PLAN_TO_READ.id))
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
     val favoriteBooks: Flow<List<Book>> = bookDao.getFavoriteBookList()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 

@@ -31,6 +31,9 @@ interface BookDao {
     @Query("SELECT * FROM book WHERE readingStatusId = :statusId ORDER BY bookId DESC")
     fun getBooksByStatus(statusId: Long): Flow<List<Book>>
 
+    @Query("SELECT * FROM book WHERE readingStatusId IN (:statusIds) ORDER BY readingStatusId ASC, lastReadDate DESC, bookId DESC")
+    fun getBooksByStatuses(statusIds: List<Long>): Flow<List<Book>>
+
     @Query("SELECT * FROM book WHERE favorite = 1 order by bookId DESC")
     fun getFavoriteBookList(): Flow<List<Book>>
 }

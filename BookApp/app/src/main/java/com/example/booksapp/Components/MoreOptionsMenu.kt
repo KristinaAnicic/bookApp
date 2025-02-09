@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
@@ -22,17 +23,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun MoreOptionsMenu(isFavorite : Boolean?,
+                    isDropped: Boolean?,
+                    isDisabled: Boolean = false,
                     onEditClick: () -> Unit,
                     onDeleteClick: () -> Unit,
-                    onFavoriteClick: () -> Unit
+                    onFavoriteClick: () -> Unit,
+                    onDroppedClick: () -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     val favoriteText = remember(isFavorite) {
         if (isFavorite == true) "Remove from favorites" else "Add to favorite"
+    }
+
+    val droppedText = remember(isDropped) {
+        if (isDropped == true) "Start reading again" else "Dropped"
     }
 
     val imageVector = remember(isFavorite) {
@@ -72,6 +81,24 @@ fun MoreOptionsMenu(isFavorite : Boolean?,
                 onClick = {
                     expanded = false
                     onFavoriteClick()
+                }
+            )
+            DropdownMenuItem(
+                text = {
+                    Text(
+                        text = droppedText,
+                        modifier = Modifier.alpha(if (isDisabled) 0.5f else 1f)) },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Clear,
+                        contentDescription = "Dropped",
+                        modifier = Modifier.alpha(if (isDisabled) 0.5f else 1f))
+                },
+                onClick = {
+                    if (!isDisabled) {
+                        expanded = false
+                        onDroppedClick()
+                    }
                 }
             )
             DropdownMenuItem(

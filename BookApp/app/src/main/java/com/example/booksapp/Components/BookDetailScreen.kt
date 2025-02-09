@@ -35,6 +35,7 @@ import com.example.booksapp.data.database.Entities.BookWithDetails
 import com.example.booksapp.data.database.Entities.ReadingFormat
 import com.example.booksapp.utils.FormatDate.formatDate
 import com.example.booksapp.utils.ReadingFormatEnum
+import com.example.booksapp.utils.ReadingStatusEnum
 import com.example.booksapp.viewModel.BooksViewModel
 import kotlinx.coroutines.flow.flowOf
 
@@ -193,8 +194,11 @@ fun BookTopNavigation(booksViewModel: BooksViewModel, book : BookWithDetails, on
             }
         }
 
-        MoreOptionsMenu(book?.book?.favorite,
-            onEditClick = { /* Action for Edit */ },
+        MoreOptionsMenu(
+            isFavorite = book?.book?.favorite,
+            isDropped = book.book.readingStatusId == ReadingStatusEnum.DROPPED.id,
+            isDisabled = ((book.book.readPagesCount ?:0) <= 0 && (book.book.readChaptersCount ?:0) <= 0),
+            onEditClick = {  },
             onDeleteClick = {
                 book?.let {
                     booksViewModel.deleteBook(it.book)
@@ -205,6 +209,18 @@ fun BookTopNavigation(booksViewModel: BooksViewModel, book : BookWithDetails, on
                 book?.book?.let { currentBook ->
                     booksViewModel.upsertBook(currentBook.copy(favorite = !currentBook.favorite))
                 }
+            },
+            onDroppedClick = {
+                if (book.book.readingStatusId == ReadingStatusEnum.DROPPED.id){
+                    book.book.readingStatusId = ReadingStatusEnum.CURRENTLY_READING.id
+                }
+                else if (book.book.readingStatusId != ReadingStatusEnum.DROPPED.id &&
+                    ((book.book.readPagesCount ?: 0) > 0 || (book.book.readChaptersCount
+                        ?: 0) > 0)
+                ){
+                    book.book.readingStatusId = ReadingStatusEnum.DROPPED.id
+                }
+                booksViewModel.upsertBook(book.book)
             }
         )
     }

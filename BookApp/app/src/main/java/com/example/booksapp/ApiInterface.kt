@@ -4,6 +4,8 @@ import com.example.booksapp.model.Bestsellers
 import com.example.booksapp.model.Book
 import com.example.booksapp.model.BookDetail.BookDetail
 import com.example.booksapp.model.BookDetail.Item
+import com.example.booksapp.model.BookSearch.BookSearchList
+import com.example.booksapp.model.BookSearch.SearchInfo
 import com.example.booksapp.model.Results
 import retrofit2.Response
 import retrofit2.http.GET
@@ -31,4 +33,10 @@ interface ApiInterface {
     suspend fun getBookById(
         @Path("bookId") bookId: String
     ):Response<Item>
+
+    @GET("volumes")
+    suspend fun getBooksBySearchString(
+        @Query("q") query: String,
+        @Query("maxResults") maxResults: String = "40"
+    ):Response<BookSearchList>
 }

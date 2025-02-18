@@ -41,7 +41,8 @@ fun AddPagesDialog(
     onDismissRequest: () -> Unit,
     onConfirmation: (Int) -> Unit,
     numOfPagesOrChapters: Int,
-    numOfReadPagesOrChapters: Int
+    numOfReadPagesOrChapters: Int,
+    addAndSubstractValue: Int
 ) {
     var page by remember { mutableStateOf(numOfReadPagesOrChapters.toString()) }
 
@@ -76,7 +77,7 @@ fun AddPagesDialog(
                             .size(40.dp)
                             .padding(start = 4.dp)
                             .clickable{
-                                val newValue = (Integer.parseInt(page) - 5)
+                                val newValue = (Integer.parseInt(page) - addAndSubstractValue)
                                 if(newValue < 0)
                                     page = "0"
                                 else
@@ -106,7 +107,7 @@ fun AddPagesDialog(
                             .size(40.dp)
                             .padding(start = 4.dp)
                             .clickable{
-                                val newValue = (Integer.parseInt(page) + 10)
+                                val newValue = (Integer.parseInt(page) + addAndSubstractValue*2)
                                 if(newValue > numOfPagesOrChapters)
                                     page = numOfPagesOrChapters.toString()
                                 else

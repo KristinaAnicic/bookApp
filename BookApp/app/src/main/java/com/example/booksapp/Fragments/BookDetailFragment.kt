@@ -29,6 +29,9 @@ import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
 
+var paramISBN: String = "ISBN"
+var paramID: String = "ID"
+
 @AndroidEntryPoint
 class BookDetailFragment : Fragment() {
     private lateinit var detailBinding: FragmentBookDetailBinding
@@ -62,11 +65,10 @@ class BookDetailFragment : Fragment() {
             }
         }
 
-        isbn = arguments?.getString("ISBN")
-        googleId = arguments?.getString("ID")
-        
+        isbn = arguments?.getString(paramISBN)
+        googleId = arguments?.getString(paramID)
 
-        if (isbn != null) {
+        if (isbn != null || googleId != null) {
             loading = detailBinding.progressBar
             loading.visibility = View.VISIBLE
 
@@ -116,7 +118,7 @@ class BookDetailFragment : Fragment() {
                     currentBookItem?.let { bookItem ->
                         booksViewModel.getBookByGoogleApiId(bookItem.id).collect { book ->
                             if (book == null) {
-                                Toast.makeText(requireContext(), "Book successfully deleted", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(requireContext(), "Book successfully removed from library", Toast.LENGTH_SHORT).show()
                                 detailBinding.addImageView.setImageResource(R.drawable.outline_add_box_24)
                                 bookSaved = false
                             } else {
@@ -191,21 +193,20 @@ class BookDetailFragment : Fragment() {
                 .load("${bookItem.imageLinks.thumbnail}&&fife=w800")
                 .into(bookCover)
             Log.d("BookItem", "Thumbnail URL: ${bookItem.imageLinks.thumbnail}")
-            bookTitleTxt.text = bookItem.title
-            authorTxt.text = bookItem.authors.joinToString(", ")
-            publishDateTxt.text = bookItem.publishedDate
-            publisherTxt.text = bookItem.publisher
-            categoriesTxt.text = bookItem.categories[0]
-            pagesCount.text = bookItem.pageCount.toString()
+            bookTitleTxt.text = bookItem.title ?: "No title available"
+            authorTxt.text = bookItem.authors?.joinToString(", ") ?: "Unknown author"
+            publishDateTxt.text = bookItem.publishedDate ?: "Unknown date"
+            publisherTxt.text = bookItem.publisher ?: "Unknown publisher"
+            categoriesTxt.text = bookItem.categories[0] ?: "Unknown category"
+            pagesCount.text = bookItem.pageCount.toString() ?: "Unknown"
 
+            val description = bookItem.description ?: "No description available"
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                 bookDescriptionTxt.text =
-                    Html.fromHtml(bookItem.description, Html.FROM_HTML_MODE_LEGACY)
+                    Html.fromHtml(description, Html.FROM_HTML_MODE_LEGACY)
             } else {
-                bookDescriptionTxt.text = HtmlCompat.fromHtml(
-                    bookItem.description,
-                    HtmlCompat.FROM_HTML_MODE_LEGACY
-                )
+                bookDescriptionTxt.text =
+                    HtmlCompat.fromHtml(description, HtmlCompat.FROM_HTML_MODE_LEGACY)
             }
         }
     }
@@ -224,8 +225,8 @@ class BookDetailFragment : Fragment() {
         fun newInstance(isbn: String? = null, id: String? = null) =
             BookDetailFragment().apply {
                 arguments = Bundle().apply {
-                    putString("ISBN", isbn)
-                    putString("ID",id)
+                    putString(paramISBN, isbn)
+                    putString(paramID,id)
                 }
             }
     }

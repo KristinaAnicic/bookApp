@@ -81,7 +81,7 @@ class HomePageFragment : Fragment() {
                                             modifier = Modifier
                                                 .padding(top = 16.dp, bottom = 16.dp).fillMaxWidth()
                                                 .background(
-                                                    color = colorResource(R.color.custom_card_color),
+                                                    color = colorResource(R.color.teal_700),
                                                     shape = RoundedCornerShape(14.dp)
                                                 ).padding(10.dp),
                                             color = Color.White,
@@ -92,8 +92,8 @@ class HomePageFragment : Fragment() {
                                     }
                                     items(currentlyReadingBooks) { book -> BookItem(
                                         book = book,
-                                        onBookClick = {
-
+                                        onBookClick = {id ->
+                                            (activity as? MainActivity)?.openSavedBookDetailFragment(id)
                                     },
                                         onAddPageClick = {newPage ->
                                             updateBookPages(newPage, book)
@@ -108,7 +108,7 @@ class HomePageFragment : Fragment() {
                                             text = "Start reading",
                                             modifier = Modifier.padding(top = 16.dp, bottom = 16.dp).fillMaxWidth()
                                                 .background(
-                                                    color = colorResource(R.color.custom_card_color),
+                                                    color = colorResource(R.color.teal_700),
                                                     shape = RoundedCornerShape(14.dp)
                                                 ).padding(10.dp),
                                             fontSize = 20.sp,
@@ -118,7 +118,8 @@ class HomePageFragment : Fragment() {
                                     }
                                     items(planToReadBooks) { book -> BookItem(
                                         book = book,
-                                        onBookClick = {
+                                        onBookClick = {id ->
+                                            (activity as? MainActivity)?.openSavedBookDetailFragment(id)
 
                                             },
                                         onAddPageClick = {newPage ->

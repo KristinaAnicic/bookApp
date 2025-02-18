@@ -201,13 +201,43 @@ class BooksViewModel @Inject constructor(
     fun Date.toLocalDate(): LocalDate = this.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
     fun LocalDate.toDate(): Date = Date.from(this.atStartOfDay(ZoneId.systemDefault()).toInstant())
 
-    fun resetStreak() {
+    fun checkAndResetReadingStreak(){
         viewModelScope.launch {
-            val streak = readingStreak.firstOrNull()
-            if (streak != null) {
-                readingStreakDao.deleteStreak(streak)
+            val currentDate = Date()
+            val streak = readingStreakDao.getStreak().firstOrNull()
+
+            if (streak != null){
+                val lastReadDate = streak.lastReadDate
+                var dayStreak = streak.consecutiveReadingDays
+                var weekStreak = streak.consecutiveReadingWeeks
+
+                val currentLocalDate = currentDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+                val lastLocalDate = lastReadDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+
+                if (lastLocalDate.isBefore(currentLocalDate.minusDays(1))) {
+                    dayStreak = 0
+                }
+
+                val currentWeek = currentLocalDate.get(WeekFields.ISO.weekOfYear())
+                val lastReadWeek = lastLocalDate.get(WeekFields.ISO.weekOfYear())
+                val currentYear = currentLocalDate.year
+                val lastReadYear = lastLocalDate.year
+
+                if ((lastReadWeek + 1 < currentWeek && currentYear == lastReadYear) ||
+                    (lastReadYear + 1 == currentYear &&
+                            lastReadWeek < currentLocalDate.minusWeeks(1).get(WeekFields.ISO.weekOfYear()))){
+
+                    weekStreak = 0
+                }
+
+                readingStreakDao.upsertStreak(
+                    streak.copy(
+                        lastReadDate = lastReadDate,
+                        consecutiveReadingDays = dayStreak,
+                        consecutiveReadingWeeks = weekStreak
+                    )
+                )
             }
         }
     }
-
 }

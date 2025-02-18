@@ -20,6 +20,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.booksapp.R
+import com.example.booksapp.data.database.Entities.Book
 import com.example.booksapp.data.database.Entities.BookWithDetails
 import com.example.booksapp.data.database.Entities.ReadingFormat
 import com.example.booksapp.utils.FormatDate.formatDate
@@ -43,6 +47,7 @@ import kotlinx.coroutines.flow.flowOf
 fun BookDetailScreen(booksViewModel: BooksViewModel, id: Long?, onBackPressed: () -> Unit) {
     val bookFlow = id?.let { booksViewModel.getBookById(it) } ?: flowOf(null)
     val bookNull by bookFlow.collectAsState(initial = null)
+    var showDialog = remember { mutableStateOf(false) }
 
     bookNull?.let { book ->
         val description = rememberParsedDescription(book.book.description)
@@ -52,9 +57,21 @@ fun BookDetailScreen(booksViewModel: BooksViewModel, id: Long?, onBackPressed: (
             modifier = Modifier
                 .fillMaxSize()
         ) {
+            if (showDialog.value) {
+                AddBookDialog(
+                    book = book,
+                    booksViewModel = booksViewModel,
+                    onConfirmation = {showDialog.value = false},
+                    onDismissRequest = {showDialog.value = false}
+                )
+            }
+
             BookTopNavigation(booksViewModel, book, onBackPressed = {
                 onBackPressed()
-            })
+                },
+                onEditClick = {
+                    showDialog.value = true
+                })
 
             Column(
                 modifier = Modifier
@@ -64,13 +81,19 @@ fun BookDetailScreen(booksViewModel: BooksViewModel, id: Long?, onBackPressed: (
                     .padding(8.dp),
                 //horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                var isError by remember { mutableStateOf(false) }
                 AsyncImage(
-                    model = "${book.book.coverImage}&&fife=w800",
+                    model = if (isError) book.book.coverImage else "${book.book.coverImage}&&fife=w800",
                     contentDescription = "Book cover",
                     modifier = Modifier
                         .height(250.dp)
                         .padding(vertical = 16.dp)
-                        .align(Alignment.CenterHorizontally)
+                        .align(Alignment.CenterHorizontally),
+                    onError = {
+                        if (!isError) {
+                            isError = true
+                        }
+                    }
                 )
 
                 Row(
@@ -156,7 +179,10 @@ fun BookDetailScreen(booksViewModel: BooksViewModel, id: Long?, onBackPressed: (
 }
 
 @Composable
-fun BookTopNavigation(booksViewModel: BooksViewModel, book : BookWithDetails, onBackPressed: () -> Unit){
+fun BookTopNavigation(booksViewModel: BooksViewModel,
+                      book : BookWithDetails,
+                      onBackPressed: () -> Unit,
+                      onEditClick: () -> Unit){
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -198,7 +224,9 @@ fun BookTopNavigation(booksViewModel: BooksViewModel, book : BookWithDetails, on
             isFavorite = book?.book?.favorite,
             isDropped = book.book.readingStatusId == ReadingStatusEnum.DROPPED.id,
             isDisabled = ((book.book.readPagesCount ?:0) <= 0 && (book.book.readChaptersCount ?:0) <= 0),
-            onEditClick = {  },
+            onEditClick = {
+                onEditClick()
+            },
             onDeleteClick = {
                 book?.let {
                     booksViewModel.deleteBook(it.book)

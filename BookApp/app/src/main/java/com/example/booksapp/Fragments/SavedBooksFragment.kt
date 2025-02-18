@@ -28,12 +28,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
+import com.example.booksapp.Components.AddBookDialog
+import com.example.booksapp.Components.AddPagesDialog
 import com.example.booksapp.Components.BookListRow
 import com.example.booksapp.Components.Streak
 import com.example.booksapp.MainActivity
@@ -81,6 +85,7 @@ class SavedBooksFragment : Fragment() {
         /*GlobalScope.launch(Dispatchers.IO) {
             booksViewModel.bookRepository.initializeDatabase()
         }*/
+        booksViewModel.checkAndResetReadingStreak()
 
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
@@ -97,10 +102,12 @@ class SavedBooksFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 BooksAppTheme {
+                    var showDialog = remember { mutableStateOf(false) }
+
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
                         floatingActionButton = {
-                            FloatingActionButton(onClick = { }) {
+                            FloatingActionButton(onClick = { showDialog.value  = true }) {
                                 Icon(Icons.Default.Add, contentDescription = "Add")
                             }
                         }
@@ -119,27 +126,27 @@ class SavedBooksFragment : Fragment() {
                                     modifier = Modifier.height(10.dp)
                                 )
                                 Row (
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(top = 15.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
+                                        .padding(top = 15.dp)
+                                        .clickable(
+                                            onClick = {
+                                                (activity as? MainActivity)?.openAllSavedBooksFragment()
+                                            }
+                                        )
                                 ){
                                     Text(
                                         text = "My book list",
-                                        //modifier = Modifier.padding(all = 8.dp),
+                                        modifier = Modifier.padding(all = 7.dp),
                                         style = MaterialTheme.typography.titleLarge,
-                                        fontWeight = FontWeight.Bold
+                                        fontWeight = FontWeight.Bold,
                                     )
                                     Icon(
                                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                         contentDescription = "More",
-                                        modifier = Modifier.size(35.dp)
-                                            .clickable(
-                                                onClick = {
-                                                    (activity as? MainActivity)?.openAllSavedBooksFragment()
-                                                }
-                                            ))
+                                        modifier = Modifier.size(35.dp))
                                 }
 
 
@@ -152,7 +159,7 @@ class SavedBooksFragment : Fragment() {
                                 Text(
                                     text = "Favorite books",
                                     //modifier = Modifier.padding(all = 8.dp),
-                                    modifier = Modifier.padding(top = 15.dp),
+                                    modifier = Modifier.padding(top = 15.dp, start = 7.dp),
                                     style = MaterialTheme.typography.titleLarge,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -162,6 +169,15 @@ class SavedBooksFragment : Fragment() {
                                     onBookClick = { bookId ->
                                         (activity as? MainActivity)?.openSavedBookDetailFragment(bookId)
                                     })
+                        }
+
+                        if (showDialog.value) {
+                            AddBookDialog(
+                                book = null,
+                                booksViewModel = booksViewModel,
+                                onConfirmation = {},
+                                onDismissRequest = {showDialog.value = false}
+                            )
                         }
                     })
                 }

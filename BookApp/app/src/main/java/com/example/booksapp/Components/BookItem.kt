@@ -26,8 +26,10 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -84,6 +86,9 @@ fun BookItem(
             .fillMaxWidth()
             .padding(10.dp)
             .clip(shape = RoundedCornerShape(15.dp, 15.dp, 0.dp, 0.dp))
+            .clickable{
+                onBookClick(book.bookId.toString())
+            }
 
     ){
         Column(
@@ -93,14 +98,22 @@ fun BookItem(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth().weight(1f)
             ) {
-                AsyncImage(
-                    model = book.coverImage,
-                    contentDescription = "Book cover",
-                    modifier = Modifier.fillMaxHeight()
-                        .clickable {
-                            onBookClick(book.bookId.toString())
-                        }
-                )
+                var imageLoadFailed by remember { mutableStateOf(false) }
+                if (book.coverImage.isNotEmpty() && !imageLoadFailed) {
+                    AsyncImage(
+                        model = book.coverImage,
+                        contentDescription = "Book cover",
+                        modifier = Modifier.fillMaxHeight()
+                            .clickable {
+                                onBookClick(book.bookId.toString())
+                            },
+                        onError = { imageLoadFailed = true }
+                    )
+                }
+                if (imageLoadFailed || book.coverImage.isEmpty()) {
+                    BookTitleAndAuthorBox(book = book, onBookClick = { id -> onBookClick(id) })
+                }
+
                 Row {
                     ShowTitleAndAuthor(book = book, modifier = Modifier.weight(1f))
 
@@ -126,7 +139,7 @@ fun BookItem(
                 progress = { progress },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(8.dp),
+                    .height(10.dp),
                 color = color,
                 trackColor = color.copy(alpha = 0.2f),
             )
@@ -142,7 +155,8 @@ fun BookItem(
                     showDialog.value = false
                 },
                 numOfReadPagesOrChapters = readTotal,
-                numOfPagesOrChapters = trackTotal
+                numOfPagesOrChapters = trackTotal,
+                addAndSubstractValue = if(book.trackChapters == true) 1 else 5
             )
         }
     }

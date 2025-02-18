@@ -1,10 +1,12 @@
 package com.example.booksapp.Components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,7 +28,13 @@ import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -54,26 +62,27 @@ fun BookListRow(books: List<Book>,
         }
     } else {
         LazyRow(
-            contentPadding = PaddingValues(16.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             items(books) { book ->
-                book.coverImage?.let {
-                        imageUrl ->
-                    if (imageUrl.isNotEmpty()) {
-                        AsyncImage(
-                            model = imageUrl,
-                            contentDescription = "Book cover",
-                            modifier = Modifier
-                                .height(150.dp)
-                                .clickable {
-                                    onBookClick(book.bookId.toString())
-                                }
-                        )
-                    }
+                var imageLoadFailed by remember { mutableStateOf(false) }
+
+                if (book.coverImage.isNotEmpty() && !imageLoadFailed) {
+                    AsyncImage(
+                        model = book.coverImage,
+                        contentDescription = "Book cover",
+                        modifier = Modifier
+                            .height(150.dp)
+                            .clickable { onBookClick(book.bookId.toString()) },
+                        onError = { imageLoadFailed = true }
+                    )
+                }
+
+                if (imageLoadFailed || book.coverImage.isEmpty()) {
+                    BookTitleAndAuthorBox(book = book, onBookClick = { id -> onBookClick(id) })
                 }
             }
         }
@@ -87,7 +96,7 @@ fun BookListGrid(books: List<Book>,
         OutlinedCard(
             modifier = Modifier.padding(top = 8.dp).fillMaxWidth(),
         ){
-            Text(text = "No saved books",
+            Text(text = "This list is empty for now",
                 modifier = Modifier.padding(30.dp),
                 textAlign = TextAlign.Center)
         }
@@ -99,27 +108,59 @@ fun BookListGrid(books: List<Book>,
             modifier = Modifier.fillMaxSize().padding(10.dp)
         ) {
             items(books) { book ->
-                book.coverImage?.let {
-                        imageUrl ->
-                    if (imageUrl.isNotEmpty()) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .clickable { onBookClick(book.bookId.toString()) }
-                        ) {
-                            AsyncImage(
-                                model = imageUrl,
-                                contentDescription = "Book cover",
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier.aspectRatio(2f / 3f)
-                                    .clickable {
-                                        onBookClick(book.bookId.toString())
-                                    }
-                            )
-                        }
-                    }
+                var imageLoadFailed by remember { mutableStateOf(false) }
+
+                if (book.coverImage.isNotEmpty() && !imageLoadFailed) {
+                    AsyncImage(
+                        model = book.coverImage,
+                        contentDescription = "Book cover",
+                        modifier = Modifier
+                            .height(150.dp)
+                            .clickable { onBookClick(book.bookId.toString()) },
+                        onError = { imageLoadFailed = true } // Obeležava da je učitavanje slike neuspešno
+                    )
+                }
+
+                if (imageLoadFailed || book.coverImage.isEmpty()) {
+                    BookTitleAndAuthorBox(book = book, onBookClick = { id -> onBookClick(id) })
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun BookTitleAndAuthorBox(book: Book, onBookClick: (id: String) -> Unit){
+    Box(
+        modifier = Modifier
+            .height(150.dp)
+            .width(100.dp)
+            .clickable {
+                onBookClick(book.bookId.toString())
+            }
+            .background(Color.LightGray.copy(alpha = 0.2f)),
+    ) {
+        Column(
+            modifier = Modifier.padding(8.dp).fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = book.title ?: "No title",
+                maxLines = 4,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = book.author ?: "Unknown author",
+                maxLines = 2,
+                fontSize = 12.sp,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center
+            )
         }
     }
 }

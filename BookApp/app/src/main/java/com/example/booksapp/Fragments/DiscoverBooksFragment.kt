@@ -38,8 +38,6 @@ class DiscoverBooksFragment : Fragment() {
     private lateinit var rvAdviceBooks: RecyclerView
     private lateinit var rvYoungAdultBooks: RecyclerView
 
-    //private lateinit var textSearch: SearchView
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -58,7 +56,6 @@ class DiscoverBooksFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //textSearch = binding.editSearch
 
         loading1 = binding.loading1
         loading2 = binding.loading2
@@ -109,47 +106,7 @@ class DiscoverBooksFragment : Fragment() {
             bestSellersApiViewModel.youngAdultBooks.observe(viewLifecycleOwner, { books ->
                 setupRecyclerView(rvYoungAdultBooks, books, loading4)
             })
-
-
-            // Učitaj podatke za sve kategorije
-            /*lifecycleScope.launch(Dispatchers.IO) {
-            loadBooks(
-                endpoint = getString(R.string.url_fiction),
-                recyclerView = rvFictionBooks,
-                progressBar = loading1
-            )
-
-            loadBooks(
-                endpoint = getString(R.string.url_nonfiction),
-                recyclerView = rvNonFictionBooks,
-                progressBar = loading2
-            )
-
-            loadBooks(
-                endpoint = getString(R.string.url_advice),
-                recyclerView = rvAdviceBooks,
-                progressBar = loading3
-            )
-
-            loadBooks(
-                endpoint = getString(R.string.url_youngAdult),
-                recyclerView = rvYoungAdultBooks,
-                progressBar = loading4
-            )
-        }*/
         }
-
-        /*textSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextChange(s: String): Boolean {
-                return true
-            }
-
-            override fun onQueryTextSubmit(s: String): Boolean {
-                (activity as? MainActivity)?.openSearchFragment(s)
-                return true
-            }
-
-        })*/
     }
 
     private fun setupRecyclerView(recyclerView: RecyclerView, books: List<Book>, progressBar: ProgressBar) {
@@ -163,13 +120,6 @@ class DiscoverBooksFragment : Fragment() {
 
         bookListAdapter.onItemClickListener = { bookItem ->
             (activity as? MainActivity)?.openBookDetailFragment(isbn = bookItem.primary_isbn13, id = null)
-
-            /*val fragment = BookDetailFragment.newInstance(isbn = bookItem.primary_isbn13)
-
-            val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()
-            transaction.replace(R.id.fragment_container, fragment)
-            transaction.addToBackStack(null)
-            transaction.commit()*/
         }
     }
 

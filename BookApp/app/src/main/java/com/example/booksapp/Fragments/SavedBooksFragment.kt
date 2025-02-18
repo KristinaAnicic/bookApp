@@ -37,7 +37,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
 import com.example.booksapp.Components.AddBookDialog
-import com.example.booksapp.Components.AddPagesDialog
 import com.example.booksapp.Components.BookListRow
 import com.example.booksapp.Components.Streak
 import com.example.booksapp.MainActivity
@@ -45,52 +44,13 @@ import com.example.booksapp.viewModel.BooksViewModel
 import com.example.booksapp.ui.theme.BooksAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
 @AndroidEntryPoint
 class SavedBooksFragment : Fragment() {
-    private var param1: String? = null
-    private var param2: String? = null
-
-    /*private val db by lazy {
-        Room.databaseBuilder(
-            requireContext(),
-            AppDatabase::class.java,
-            "books.db"
-        ).build()
-    }*/
-
-    /*private val db by lazy {
-        AppDatabase.getDatabase(requireContext())
-    }*/
-
     private val booksViewModel: BooksViewModel by viewModels()
-
-    /*private val booksViewModel by viewModels<BooksViewModel>(
-        factoryProducer = {
-            object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return BooksViewModel(db.bookDao(), db.quoteDao(), db.readingStatusDao(),
-                        db.readingFormatDao(), db.readingStreakDao()) as T
-                }
-            }
-        }
-    )*/
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        /*GlobalScope.launch(Dispatchers.IO) {
-            booksViewModel.bookRepository.initializeDatabase()
-        }*/
         booksViewModel.checkAndResetReadingStreak()
-
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -185,15 +145,4 @@ class SavedBooksFragment : Fragment() {
         }
     }
         //return inflater.inflate(R.layout.fragment_my_books, container, false)
-
-    companion object {
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            SavedBooksFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
 }

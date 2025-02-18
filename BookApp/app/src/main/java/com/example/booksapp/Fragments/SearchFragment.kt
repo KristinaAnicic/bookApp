@@ -7,17 +7,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,11 +21,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
 import com.example.booksapp.Components.BookListGridSearch
 import com.example.booksapp.MainActivity
-import com.example.booksapp.R
 import com.example.booksapp.model.BookSearch.BookSearchList
 import com.example.booksapp.ui.theme.BooksAppTheme
 import com.example.booksapp.utils.RetrofitInstance
@@ -92,14 +85,7 @@ class SearchFragment : Fragment() {
                             BookListGridSearch(
                                 bookList!!.items,
                                 onBookClick = {googleId ->
-                                    //Toast.makeText(context, googleId, Toast.LENGTH_SHORT).show()
                                     (activity as? MainActivity)?.openBookDetailFragment(isbn = null, id = googleId)
-                                    /*val fragment = BookDetailFragment.newInstance(id = googleId)
-
-                                    val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()
-                                    transaction.replace(R.id.fragment_container, fragment)
-                                    transaction.addToBackStack(null)
-                                    transaction.commit()*/
                                 }
                             )
                         }

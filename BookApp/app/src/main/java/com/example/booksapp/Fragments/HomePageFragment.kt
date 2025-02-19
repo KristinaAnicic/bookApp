@@ -73,7 +73,7 @@ class HomePageFragment : Fragment() {
                                             modifier = Modifier
                                                 .padding(top = 16.dp, bottom = 16.dp).fillMaxWidth()
                                                 .background(
-                                                    color = colorResource(R.color.teal_700),
+                                                    color = colorResource(R.color.custom_card_color),
                                                     shape = RoundedCornerShape(14.dp)
                                                 ).padding(10.dp),
                                             color = Color.White,
@@ -100,7 +100,7 @@ class HomePageFragment : Fragment() {
                                             text = "Start reading",
                                             modifier = Modifier.padding(top = 16.dp, bottom = 16.dp).fillMaxWidth()
                                                 .background(
-                                                    color = colorResource(R.color.teal_700),
+                                                    color = colorResource(R.color.custom_card_color),
                                                     shape = RoundedCornerShape(14.dp)
                                                 ).padding(10.dp),
                                             fontSize = 20.sp,

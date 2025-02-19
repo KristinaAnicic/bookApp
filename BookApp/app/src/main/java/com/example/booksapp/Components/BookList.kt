@@ -105,7 +105,7 @@ fun BookListGrid(books: List<Book>,
                         model = book.coverImage,
                         contentDescription = "Book cover",
                         modifier = Modifier
-                            .height(150.dp)
+                            .aspectRatio(2f / 3f)
                             .clickable { onBookClick(book.bookId.toString()) },
                         onError = { imageLoadFailed = true } // Obeležava da je učitavanje slike neuspešno
                     )

@@ -193,7 +193,7 @@ fun AddBookDialog(book : BookWithDetails? = null,
                     )
 
                     Text(
-                        text = "In which format are you reading the book: "
+                        text = "How are you reading the book?"
                     )
 
                     CustomDropDown(
@@ -208,7 +208,7 @@ fun AddBookDialog(book : BookWithDetails? = null,
                     )
 
                     Text(
-                        text = "Track progress by: "
+                        text = "Track progress by"
                     )
                     CustomDropDown(
                         items = listOf("Pages", "Chapters"),

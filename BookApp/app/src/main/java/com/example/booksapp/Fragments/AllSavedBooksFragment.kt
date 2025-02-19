@@ -119,7 +119,7 @@ fun SingleChoiceButton(viewModel: BooksViewModel) {
             modifier = Modifier
                 .padding(vertical = 4.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (isSelected) colorResource(R.color.teal_700) else Color.Transparent,
+                containerColor = if (isSelected) colorResource(R.color.custom_card_color) else Color.Transparent,
                 contentColor = if (isSelected) Color.White else colorScheme.onSurface
             ),
         ) {

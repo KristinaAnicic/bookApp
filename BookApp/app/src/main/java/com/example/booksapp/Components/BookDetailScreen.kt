@@ -31,6 +31,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -64,6 +65,7 @@ import com.example.booksapp.utils.FormatDate.formatDate
 import com.example.booksapp.utils.ReadingFormatEnum
 import com.example.booksapp.utils.ReadingStatusEnum
 import com.example.booksapp.viewModel.BooksViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOf
 
 @Composable
@@ -107,9 +109,9 @@ fun BookDetailScreen(booksViewModel: BooksViewModel, id: Long?, onBackPressed: (
                     modifier = Modifier
                         .height(250.dp)
                         .padding(vertical = 16.dp)
-                        .align(Alignment.CenterHorizontally),
-                    placeholder = painterResource(id = R.drawable.outline_image_not_supported_24),
-                    error = painterResource(id = R.drawable.outline_image_not_supported_24),
+                        .align(Alignment.CenterHorizontally)
+                        .aspectRatio(3f/4f),
+                    error = painterResource(id = R.drawable.outline_image_not_supported_24)
                 )
 
                 /*Box(

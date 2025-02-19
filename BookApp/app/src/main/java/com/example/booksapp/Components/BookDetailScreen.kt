@@ -7,13 +7,17 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
 import android.widget.TextView
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,7 +26,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -33,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
@@ -47,6 +54,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.text.HtmlCompat
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.example.booksapp.R
 import com.example.booksapp.data.database.Entities.Book
 import com.example.booksapp.data.database.Entities.BookWithDetails
@@ -87,25 +96,40 @@ fun BookDetailScreen(booksViewModel: BooksViewModel, id: Long?, onBackPressed: (
             Column(
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
-                    .weight(1f)
+                    /*.weight(1f)*/
                     .fillMaxWidth()
                     .padding(8.dp),
                 //horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                var isError by remember { mutableStateOf(false) }
                 AsyncImage(
-                    model = if (isError) book.book.coverImage else "${book.book.coverImage}&&fife=w800",
+                    model = book.book.coverImage,
                     contentDescription = "Book cover",
                     modifier = Modifier
                         .height(250.dp)
                         .padding(vertical = 16.dp)
                         .align(Alignment.CenterHorizontally),
-                    onError = {
-                        if (!isError) {
-                            isError = true
-                        }
-                    }
+                    placeholder = painterResource(id = R.drawable.outline_image_not_supported_24),
+                    error = painterResource(id = R.drawable.outline_image_not_supported_24),
                 )
+
+                /*Box(
+                    modifier = Modifier
+                        .padding(vertical = 16.dp)
+                        .height(250.dp)
+                        .aspectRatio(3f/4f)
+                        .border(1.dp, MaterialTheme.colorScheme.onSurface)
+                        .align(Alignment.CenterHorizontally),
+                    contentAlignment = Alignment.Center,
+
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.outline_image_not_supported_24),
+                        contentDescription = "Placeholder image",
+                        modifier = Modifier
+                            .size(50.dp)
+                            .fillMaxSize()
+                    )
+                }*/
 
                 Row(
                     modifier = Modifier.fillMaxWidth()

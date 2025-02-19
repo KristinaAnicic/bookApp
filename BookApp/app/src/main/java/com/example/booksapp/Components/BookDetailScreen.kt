@@ -1,5 +1,12 @@
 package com.example.booksapp.Components
 
+import android.graphics.Typeface
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
+import android.text.style.UnderlineSpan
+import android.widget.TextView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -28,10 +35,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.text.HtmlCompat
 import coil.compose.AsyncImage
 import com.example.booksapp.R
 import com.example.booksapp.data.database.Entities.Book
@@ -50,8 +64,10 @@ fun BookDetailScreen(booksViewModel: BooksViewModel, id: Long?, onBackPressed: (
     var showDialog = remember { mutableStateOf(false) }
 
     bookNull?.let { book ->
-        val description = rememberParsedDescription(book.book.description)
-        val annotatedDescription = rememberAnnotatedDescription(description)
+        val description = book.book.description ?: ""
+        HtmlCompat.fromHtml(description, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        val spanned = HtmlCompat.fromHtml(description, HtmlCompat.FROM_HTML_MODE_COMPACT)
+        val annotatedDescription = spanned.toAnnotatedString()
 
         Column(
             modifier = Modifier
@@ -156,11 +172,19 @@ fun BookDetailScreen(booksViewModel: BooksViewModel, id: Long?, onBackPressed: (
                     fontWeight = FontWeight.Bold
                 )
 
-                Text(
+                /*Text(
                     text = annotatedDescription,
                     modifier = Modifier.padding(5.dp),
                     lineHeight = 19.sp,
                     fontSize = 14.sp
+                )*/
+
+                AndroidView(
+                    modifier = Modifier.padding(5.dp),
+                    factory = { context -> TextView(context) },
+                    update = { it.text =
+                        book.book.description?.let { it1 -> HtmlCompat.fromHtml(it1, HtmlCompat.FROM_HTML_MODE_COMPACT) } ?: ""
+                    }
                 )
             }
         }
@@ -251,5 +275,23 @@ fun BookTopNavigation(booksViewModel: BooksViewModel,
                 booksViewModel.upsertBook(book.book)
             }
         )
+    }
+}
+
+fun Spanned.toAnnotatedString(): AnnotatedString = buildAnnotatedString {
+    val spanned = this@toAnnotatedString
+    append(spanned.toString())
+    getSpans(0, spanned.length, Any::class.java).forEach { span ->
+        val start = getSpanStart(span)
+        val end = getSpanEnd(span)
+        when (span) {
+            is StyleSpan -> when (span.style) {
+                Typeface.BOLD -> addStyle(SpanStyle(fontWeight = FontWeight.Bold), start, end)
+                Typeface.ITALIC -> addStyle(SpanStyle(fontStyle = FontStyle.Italic), start, end)
+                Typeface.BOLD_ITALIC -> addStyle(SpanStyle(fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic), start, end)
+            }
+            is UnderlineSpan -> addStyle(SpanStyle(textDecoration = TextDecoration.Underline), start, end)
+            is ForegroundColorSpan -> addStyle(SpanStyle(color = Color(span.foregroundColor)), start, end)
+        }
     }
 }

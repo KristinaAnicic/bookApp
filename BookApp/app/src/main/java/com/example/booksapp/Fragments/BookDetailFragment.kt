@@ -192,7 +192,7 @@ class BookDetailFragment : Fragment() {
             Glide.with(requireContext())
                 .load("${bookItem.imageLinks.thumbnail}&&fife=w800")
                 .into(bookCover)
-            Log.d("BookItem", "Thumbnail URL: ${bookItem.imageLinks.thumbnail}")
+            Log.d("BookItem", "Thumbnail url: ${bookItem.imageLinks.thumbnail}")
             bookTitleTxt.text = bookItem.title ?: "No title available"
             authorTxt.text = bookItem.authors?.joinToString(", ") ?: "Unknown author"
             publishDateTxt.text = bookItem.publishedDate ?: "Unknown date"

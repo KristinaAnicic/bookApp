@@ -69,9 +69,12 @@ class AllSavedBooksFragment : Fragment() {
                                         .horizontalScroll(rememberScrollState()),
                                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                                 ) {
+                                    //pokazuje opcije za sortiranje knjiga po statusu čitanja (Completed, Plan to read,...)
                                     SingleChoiceButton(booksViewModel)
                                 }
                                 Spacer(modifier = Modifier.padding(5.dp))
+
+                                //Prikaz grid knjiga po sortiranom (automatski se mijenja lista u SingleChoiceButton)
                                 BookListGrid(books,
                                     onBookClick = { bookId ->
                                         (activity as? MainActivity)?.openSavedBookDetailFragment(bookId)

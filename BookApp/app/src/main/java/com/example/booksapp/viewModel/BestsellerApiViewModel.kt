@@ -42,6 +42,8 @@ class BestsellerApiViewModel : ViewModel() {
             areBooksLoaded = true
         }
     }
+
+    //ograničavanje broja istovremenih poziva
     private val apiCallSemaphore = Semaphore(2)
 
     private suspend fun loadBooks(endpoint: String): List<Book> {

@@ -64,11 +64,6 @@ fun BookDetailScreen(booksViewModel: BooksViewModel, id: Long?, onBackPressed: (
     var showDialog = remember { mutableStateOf(false) }
 
     bookNull?.let { book ->
-        val description = book.book.description ?: ""
-        HtmlCompat.fromHtml(description, HtmlCompat.FROM_HTML_MODE_LEGACY)
-        val spanned = HtmlCompat.fromHtml(description, HtmlCompat.FROM_HTML_MODE_COMPACT)
-        val annotatedDescription = spanned.toAnnotatedString()
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -172,18 +167,11 @@ fun BookDetailScreen(booksViewModel: BooksViewModel, id: Long?, onBackPressed: (
                     fontWeight = FontWeight.Bold
                 )
 
-                /*Text(
-                    text = annotatedDescription,
-                    modifier = Modifier.padding(5.dp),
-                    lineHeight = 19.sp,
-                    fontSize = 14.sp
-                )*/
-
                 AndroidView(
                     modifier = Modifier.padding(5.dp),
                     factory = { context -> TextView(context) },
                     update = { it.text =
-                        book.book.description?.let { it1 -> HtmlCompat.fromHtml(it1, HtmlCompat.FROM_HTML_MODE_COMPACT) } ?: ""
+                        book.book.description?.let { it1 -> HtmlCompat.fromHtml(it1, HtmlCompat.FROM_HTML_MODE_COMPACT) } ?: "Book has no description"
                     }
                 )
             }
@@ -275,23 +263,5 @@ fun BookTopNavigation(booksViewModel: BooksViewModel,
                 booksViewModel.upsertBook(book.book)
             }
         )
-    }
-}
-
-fun Spanned.toAnnotatedString(): AnnotatedString = buildAnnotatedString {
-    val spanned = this@toAnnotatedString
-    append(spanned.toString())
-    getSpans(0, spanned.length, Any::class.java).forEach { span ->
-        val start = getSpanStart(span)
-        val end = getSpanEnd(span)
-        when (span) {
-            is StyleSpan -> when (span.style) {
-                Typeface.BOLD -> addStyle(SpanStyle(fontWeight = FontWeight.Bold), start, end)
-                Typeface.ITALIC -> addStyle(SpanStyle(fontStyle = FontStyle.Italic), start, end)
-                Typeface.BOLD_ITALIC -> addStyle(SpanStyle(fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic), start, end)
-            }
-            is UnderlineSpan -> addStyle(SpanStyle(textDecoration = TextDecoration.Underline), start, end)
-            is ForegroundColorSpan -> addStyle(SpanStyle(color = Color(span.foregroundColor)), start, end)
-        }
     }
 }
